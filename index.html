@@ -115,6 +115,52 @@ var scene = new THREE.Scene();
 // Create a three.js camera.
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
+
+// BELOW SECTION WORKING WITH GETUSERMEDIA... NOT WORKING!
+//might be only useful if we want to create a streaming audio environment... could be really cool. Future demo?
+//futureproofing get user media
+/*navigator.getUserMedia = navigator.getUserMedia ||
+  navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+
+
+if (typeof MediaStreamTrack === 'undefined' && navigator.getUserMedia) {
+    alert('This browser doesn\'t support this demo :(');
+  } else {
+    // Get our camera data!
+    MediaStreamTrack.getSources(function(sources) {
+      for (var i = 0; i !== sources.length; ++i) {
+        var source = sources[i];
+        if (source.kind === 'audio') {
+            options.video.optional.push({'sourceId': source.id});
+          
+        }
+      }
+
+navigator.getUserMedia(options, streamFound, streamError);
+    });
+  }*/
+//And I don't know if this will wokr on Django... this is the client-side code for socketio audio recording...
+//https://www.npmjs.com/package/recordrtc-socketio
+/*
+var socketio = io();
+ 
+var files = {
+    audio: {
+        name: demo1 + '.wav',
+        type: 'audio/wav',
+        dataURL: dataURL.audio
+    },
+    //video: {
+      //  name: fileName + '.webm',
+        //type: 'video/webm',
+        //dataURL: dataURL.video
+    //}
+};
+ 
+socketio.emit('message', files);*/
+
+
 //var vrControls = new THREE.VRControls(camera);
 //thanks to https://github.com/brianpeiris/three-firstperson-vr-controls
 var fpVRControls = new THREE.FirstPersonVRControls(camera, scene);
