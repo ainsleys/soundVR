@@ -217,14 +217,22 @@ function createAudioObject(){
   //will make audio object at location
   //var geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25)
   //var material = new THREE.MeshNormalMaterial();
-  var audioCube = new THREE.BoxGeometry(40, 40, 40);
-
+  var audioCube = new THREE.CubeGeometry(0.5, 0.5, 0.5);
+  //audioCube.position.x = camera.position.x;
+  //audioCube.position.y= camera.position.y;
+  //audioCube.position.z = camera.position.z;
   var material_1 = new THREE.MeshBasicMaterial({
     color: 0xffffff,
   });
 
-  var mesh1 = new THREE.Mesh(cube, material_1);
-  mesh1.position.set(0, 20, 100);
+  var mesh1 = new THREE.Mesh(audioCube, material_1);
+  mesh1.position.set(camera.position.x, camera.position.y, camera.position.z);
+  console.log(mesh1)
+  console.log(mesh1);
+  console.log(camera.position.x);
+  console.log(camera.position.y);
+  console.log(camera.position.z);
+  scene.add(mesh1);
 
   //var audioClip = new THREE.audio
   //audioCube.add()
@@ -234,7 +242,7 @@ function createAudioObject(){
 
 function onKey(event) {
   if (event.keyCode == 32) {
-    createAudio();
+    createAudioObject();
     console.log("Detected onkey");
   }
 }
