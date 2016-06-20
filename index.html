@@ -163,8 +163,8 @@ socketio.emit('message', files);*/
 
 //var vrControls = new THREE.VRControls(camera);
 //thanks to https://github.com/brianpeiris/three-firstperson-vr-controls
-var fpVRControls = new THREE.FirstPersonVRControls(camera, scene);
-fpVRControls.verticalMovement = true;
+//var fpVRControls = new THREE.FirstPersonVRControls(camera, scene);
+//fpVRControls.verticalMovement = true;
 
 
 //garbage
@@ -189,8 +189,61 @@ fpVRControls.verticalMovement = true;
 //var FirstPersonControls = new THREE.FirstPersonControls(character, renderer.domElement);
 
 //Apply VR headset positional data to camera.
-var controls = new THREE.VRControls(camera);
-controls.standing = true;
+
+  // CONTROLS (from https://github.com/arturitu/cute-cubes/blob/master/js/vive_talking.js)
+  if ( navigator.getVRDisplays || navigator.getVRDevices ) {
+
+    controls = new THREE.VRControls( camera, vrFallback );
+    controls.standing = true;
+    vrMode = true;
+
+    navigator.getVRDisplays().then( function ( displays ) {
+
+      if ( displays.length > 0 ) {
+
+        vrDisplay = displays[ 0 ];
+
+        if ( vrDisplay.stageParameters ) {
+
+          // console.log( vrDisplay.stageParameters );
+          var secureGeo = new THREE.PlaneGeometry(  vrDisplay.stageParameters.sizeX, vrDisplay.stageParameters.sizeZ, 32, 32 );
+          initMinRadius = Math.max( vrDisplay.stageParameters.sizeX, vrDisplay.stageParameters.sizeZ );
+          initMaxRadius = initMinRadius + 4;
+
+          secureGeo.rotateX( - Math.PI / 2 );
+
+          secureArea = new THREE.Mesh( secureGeo, new THREE.MeshLambertMaterial( { color: 0x999999 } ) );
+          secureArea.receiveShadow = true;
+          secureArea.position.y = - 0.01;
+          scene.add( secureArea );
+
+        }
+
+      }
+
+    } );
+
+  } else {
+
+    camera.position.set ( 0, userHeight, 0 );
+    vrFallback();
+
+  }
+
+  function vrFallback() {
+
+  mouse.x = 0;
+  mouse.y = 0;
+  controls = new THREE.TouchControls( camera, mouse, 0 );
+
+  //Only for debug purposes
+  keyManager = new KeyManager( camera );
+
+}
+
+
+//var controls = new THREE.VRControls(camera);
+//controls.standing = true;
 
 
 
@@ -297,6 +350,8 @@ window.addEventListener('resize', onResize, true);
 window.addEventListener('vrdisplaypresentchange', onResize, true);
 window.addEventListener('keydown', onKey, true);
 
+
+
 // Request animation frame loop function
 var lastRender = 0;
 function animate(timestamp) {
@@ -309,7 +364,7 @@ function animate(timestamp) {
 
   // Update VR headset position and apply to camera.
   controls.update();
-  fpVRControls.update(timestamp);
+  //fpVRControls.update(timestamp);
   //FirstPersonControls.update();
 
   // TK update VR camcube and apply to camera
@@ -335,8 +390,13 @@ function setupStage() {
   navigator.getVRDisplays().then(function(displays) {
     if (displays.length > 0) {
       display = displays[0];
+      console.log(display);
+      console.log("This is the setupstage fuction running, above text should be the display....")
       if (display.stageParameters) {
         setStageDimensions(display.stageParameters);
+        console.log("this is a room-scale device !")
+        console.log(display.stageParameters);
+        console.log(display.getPose+ "this is the pose");
       }
     }
   });
@@ -350,6 +410,8 @@ function setStageDimensions(stage) {
   // Size the skybox according to the size of the actual stage.
   var geometry = new THREE.BoxGeometry(stage.sizeX, boxSize, stage.sizeZ);
   skybox = new THREE.Mesh(geometry, material);
+  console.log("The skybox is "+ boxSize + "big");
+ 
 
   // Place it on the floor.
   skybox.position.y = boxSize/2;
@@ -357,6 +419,7 @@ function setStageDimensions(stage) {
 
   // Place the cube in the middle of the scene, at user height.
   cube.position.set(0, controls.userHeight, 0);
+
 }
 
 </script>
